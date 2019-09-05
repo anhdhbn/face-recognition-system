@@ -51,15 +51,20 @@ phase_train_placeholder = sess.graph.get_tensor_by_name('model/phase_train:0')
 @app.route('/', methods=['POST'])
 def post():
     data = request.get_json()
-    path = os.path.join(args.PATH_IMAGES, data['file_path'])
-    embedding = get_embedding(path, input, phase_train_placeholder, output, sess)
-    return {
+    path = os.path.join(args.PATH_IMAGES, "cropped", data['file_path'])
+    embedding = get_embedding(path, input, phase_train_placeholder, output, sess)   
+    result =  {
       "success": True,
       "embedding": embedding.shape
     }
-
+    print(result)
+    return result
+@app.route('/', methods=['GET'])
+def test():
+  return "Okila"
+  
 if __name__ == "__main__":
   if args.PATH_IMAGES is None:
     print("PATH_IMAGES is not None")
-    return
-  app.run()
+  else:
+    app.run(debug=False,host='0.0.0.0',port=5000)

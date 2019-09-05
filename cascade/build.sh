@@ -1,1 +1,1 @@
-sudo docker build -t face_detection_cascase .
+sudo docker build -t face_detection .

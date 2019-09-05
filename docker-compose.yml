@@ -1,0 +1,58 @@
+version: '2.1'
+
+services:
+  recognition:
+    image: face_recognition
+    container_name: recognition
+    build:
+      dockerfile: Dockerfile
+      context: ./recognition
+    volumes:
+      - /home/ailab/projects/face-recognition-system/images:/app/images
+    environment:
+      - PATH_IMAGES=images
+    networks:
+     - face-recognition-system
+    expose:
+      - "5000"
+
+  detection:
+    image: face_detection
+    container_name : face_detection
+    build:
+      dockerfile: Dockerfile
+      context: ./cascade
+    depends_on:
+      - recognition
+    environment:
+      - PATH_IMAGES=images
+      - URL_STREAMING=http://10.0.30.218:8080/video
+      - SCALE_FACTOR=1.3
+      - NEIGHBOURS=5
+      - URL_ENDPOINT=http://recognition:5000/
+    volumes:
+      - /home/ailab/projects/face-recognition-system/images:/app/images
+    links:
+      - "recognition:recognition"
+    networks:
+     - face-recognition-system
+  # compose-test-ping:
+  #   image: centos
+  #   links:
+  #     - recognition
+  #   command: ping -c 5 recognition
+  #   networks:
+  #    - face-recognition-system
+  # compose-test-http:
+  #   image: mwendler/wget
+  #   links:
+  #     - recognition
+  #   command: wget -T 50 -c recognition:5000
+  #   networks:
+  #    - face-recognition-system
+  #   depends_on:
+  #     - recognition
+networks:
+  face-recognition-system:
+    name: face-recognition-system
+    driver: bridge

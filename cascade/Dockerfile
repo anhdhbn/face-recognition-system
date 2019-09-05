@@ -20,12 +20,13 @@ ADD . /app
 RUN \
 apt-get update && \
 # apt-get -y upgrade && \
-apt-get install software-properties-common -y && \
-add-apt-repository ppa:fkrull/deadsnakes && \
-apt-get update && \
-apt-get install -y nano vim curl
+# apt-get install software-properties-common -y && \
+# add-apt-repository ppa:fkrull/deadsnakes && \
+# apt-get update && \
+# apt-get install -y nano vim curl
+apt-get install -y vim curl
 
-RUN pip3 install -m requirements.txt
+RUN pip3 install -r requirements.txt
 
 CMD ["python3", "main.py"]
 
