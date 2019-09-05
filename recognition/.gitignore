@@ -96,3 +96,5 @@ ENV/
 test/
 models/
 __pycache__
+main*.py
+test_request.py
