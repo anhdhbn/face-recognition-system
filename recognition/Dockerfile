@@ -17,6 +17,9 @@ ADD . /app
 # Using pip:
 RUN python3 -m pip install -r requirements.txt
 
+RUN ["python3", "get_images.py"]
+RUN ["python3", "get_embeddings.py"]
+
 CMD ["python3", "server.py"]
 
 # Using pipenv:

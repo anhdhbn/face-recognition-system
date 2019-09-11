@@ -1,4 +1,4 @@
-version: '2.1'
+version: '2.3'
 
 services:
   face-recognition:
@@ -6,3 +6,4 @@ services:
     build: .
     ports:
       - 3000:3000
+    runtime: nvidia

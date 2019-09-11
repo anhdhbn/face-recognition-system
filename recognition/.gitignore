@@ -99,3 +99,4 @@ __pycache__
 main*.py
 test_request.py
 save_models.py
+*.pkl

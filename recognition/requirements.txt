@@ -9,3 +9,4 @@ requests
 psutil
 keras
 flask
+pickle-mixin

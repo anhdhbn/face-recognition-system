@@ -18,8 +18,6 @@ URL_ENDPOINT = os.getenv('URL_ENDPOINT', None)
 
 args = argparse.ArgumentParser()
 
-
-
 def main(args):
     if args.PATH_IMAGES is None:
         print("PATH_IMAGES is not None")
@@ -52,14 +50,18 @@ def main(args):
         pass
 
     while cap.isOpened():
-        ret, frame = cap.read()
-        if ret is True:
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            faces = face_cascade.detectMultiScale(gray, float(args.SCALE_FACTOR), int(args.NEIGHBOURS))
-            for position in faces:
-                post_processing(position, frame)
-        else:
-            break
+        try:
+            ret, frame = cap.read()
+            if ret is True:
+                gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+                faces = face_cascade.detectMultiScale(gray, float(args.SCALE_FACTOR), int(args.NEIGHBOURS))
+                for position in faces:
+                    post_processing(position, frame)
+            else:
+                break
+        except:
+            pass
+        
 
 def post_processing(position, frame):
     x, y, w, h = position
