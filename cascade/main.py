@@ -15,6 +15,8 @@ CASCADE = os.getenv('CASCADE', "haarcascade_frontalface_default.xml")
 SCALE_FACTOR = os.getenv('SCALE_FACTOR', 1.3)
 NEIGHBOURS = os.getenv('NEIGHBOURS', 5)
 URL_ENDPOINT = os.getenv('URL_ENDPOINT', None)
+# 1 skip frame 
+# pass resolution 1920 x 1080 HD, viewport x480
 
 args = argparse.ArgumentParser()
 
@@ -55,42 +57,72 @@ def main(args):
             if ret is True:
                 gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
                 faces = face_cascade.detectMultiScale(gray, float(args.SCALE_FACTOR), int(args.NEIGHBOURS))
-                for position in faces:
-                    post_processing(position, frame)
+                post_processing(faces, frame)
+                # for position in faces:
+                #     post_processing(position, frame)
             else:
                 break
         except:
             pass
         
-
-def post_processing(position, frame):
-    x, y, w, h = position
+def crop_img(image, pos):
     id = uuid.uuid4()
-    path = os.path.join(args.PATH_IMAGES, f"{id}.{x}.{y}.{w}.{h}.jpg")
-    path_cropped = os.path.join(args.PATH_IMAGES, "cropped", f"{id}.jpg")
-    # print(path)
-    cv2.imwrite(path,frame)
+    # x, y, w, h = position
+    x, y, w, h = pos
+    
+    path_child = os.path.join(args.PATH_IMAGES, "cropped", f"{id}.{x}.{y}.{w}.{h}.jpg")
 
-    img = cv2.imread(path)
-    crop_img = img[y:y+h, x:x+w]
-    cv2.imwrite(path_cropped, crop_img)
-    data = {
-        'file_path': f"{id}.jpg",
-        'x': int(x),
-        'y': int(y),
-        'w': int(w),
-        'h': int(h)
-    }
-    # await requests.post(args.URL_ENDPOINT, data)
-    # requests.post(args.URL_ENDPOINT, data)
-    try:      
-        if sys.version_info >= (3, 7):
-            asyncio.run(request(data))
-        else:
-            loop = asyncio.get_event_loop()
-            loop.run_until_complete(request(data))
-    except:
-        pass
+    crop_img = image[y:y+h, x:x+w]
+    cv2.imwrite(path_child, crop_img)
+
+    return path_child, int(x), int(y), int(w), int(h)
+
+# def post_processing(faces, frame, pos):
+def post_processing(faces, frame):
+    # parent_id = uuid.uuid4()
+    # path = os.path.join(args.PATH_IMAGES, f"{parent_id}.jpg")
+    # cv2.imwrite(path, frame)
+
+    # cropped_img = [crop_img(frame, face) for face in faces]
+
+    # data = {
+    #     'parent_path': f"{parent_id}.jpg",
+    #     'childrent': cropped_img
+    # }
+    # # await requests.post(args.URL_ENDPOINT, data)
+    # # requests.post(args.URL_ENDPOINT, data)
+    # try:      
+    #     if sys.version_info >= (3, 7):
+    #         asyncio.run(request(data))
+    #     else:
+    #         loop = asyncio.get_event_loop()
+    #         loop.run_until_complete(request(data))
+    # except:
+    #     pass
+
+    # Neu trong anh co mat thi luu va crop mat trong anh
+    if len(faces) > 0:
+        parent_id = uuid.uuid4()
+        path = os.path.join(args.PATH_IMAGES, f"{parent_id}.jpg")
+        cv2.imwrite(path, frame)
+
+        cropped_img = [crop_img(frame, face) for face in faces]
+
+        data = {
+            'parent_path': f"{parent_id}.jpg",
+            'childrent': cropped_img
+        }
+        # await requests.post(args.URL_ENDPOINT, data)
+        # requests.post(args.URL_ENDPOINT, data)
+        print(data)
+        try:      
+            if sys.version_info >= (3, 7):
+                asyncio.run(request(data))
+            else:
+                loop = asyncio.get_event_loop()
+                loop.run_until_complete(request(data))
+        except:
+            pass
 
 async def request(data):
     async with aiohttp.ClientSession() as session:

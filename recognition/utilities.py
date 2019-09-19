@@ -2,6 +2,13 @@ from keras.preprocessing.image import load_img, save_img, img_to_array
 import tensorflow as tf
 import pickle
 import numpy as np
+import requests
+import base64
+import datetime
+import os
+import cv2
+
+DATA_PATH = "./data"
 
 def preprocess_image(image_path):
   img = load_img(image_path, target_size=(160, 160))
@@ -24,12 +31,13 @@ def get_embedding(image_path, input, phase_train_placeholder, embedding, sess):
     emb = sess.run(embedding, feed_dict={input: img, phase_train_placeholder: False})
     return emb.squeeze()
     
-def save_obj(obj, name ):
-    with open( name + '.pkl', 'wb') as f:
+def save_obj(obj, path ):
+    with open(os.path.join(DATA_PATH, path) , 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
-def load_obj(name ):
-  with open( name + '.pkl', 'rb') as f:
+def load_obj(path ):
+  print(DATA_PATH, path)
+  with open( os.path.join(DATA_PATH, path), 'rb') as f:
       return pickle.load(f)
 
 def find_distance(v1, v2):
@@ -40,3 +48,41 @@ def find_min(vector, db):
   dt = [(person_id, find_distance(vector, v2)) for person_id, v2 in db.items()]
   person_id, _ = min(dt, key=lambda x: x[1]) 
   return person_id
+
+
+def post_to_main_server(id_persion, parent_path, pos):
+  API_SAVE_TAGGINGFACE = "http://api.recofat.vn/api/TaggingFaces?token=recofat@2019"
+  item = {}
+  x, y, w, h = pos
+  # pos la x y w h, x y la toa do bat dau w h la chieu dai va chieu cao
+  # dua vao do ma cat
+  img = cv2.imread(parent_path)
+  cv2.rectangle(img, (x, y), (x+w, y+h), (255,0,0), 2)
+  
+
+  item["TaggingFaceID"]=0  #truyền vào 0, ngầm hiểu làm thêm mới
+  item["CameraID"]= 1 #Camera nhan dang, có thể thử với số 1, 2 gì đó
+  item["PersonID"]= id_persion #Người đc nhận dạng, lấy theo PersonID đã lấy về hôm nọ nhé
+  item["LocationID"]= 0 #Cái này thừa, đc lấy theo camera ở trên
+  item["Time"]= datetime.datetime.now()
+  item["Image"]= numpy_to_base64(img)
+
+  response = requests.post(API_SAVE_TAGGINGFACE, data=item)
+  if response.status_code != 200:
+    print("Can not save...")
+  else:
+    print(response.text)
+    print("Save data successfully...")
+
+def image_to_base64(path_image):
+  with open(path_image, "rb") as image_file:
+    encoded_string = base64.b64encode(image_file.read())
+    return encoded_string
+
+def numpy_to_base64(img):
+    """Convert a Numpy array to JSON string"""
+    imdata = pickle.dumps(img)
+    return base64.b64encode(imdata).decode('ascii')
+
+if __name__ == "__main__":
+  post_to_main_server(3, "/home/ailab/projects/face-recognition-system/recognition/images_data/2/ad6aeadc-45d2-4436-912f-57e2076a30ec.jpg")

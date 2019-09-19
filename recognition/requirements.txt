@@ -1,7 +1,7 @@
-tensorflow
 scipy
 scikit-learn
 opencv-python
+opencv-contrib-python
 h5py
 matplotlib
 Pillow
