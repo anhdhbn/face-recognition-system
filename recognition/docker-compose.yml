@@ -1,8 +1,26 @@
 version: '2.1'
 
 services:
-  face-recognition:
-    image: face-recognition
+  # face-recognition:
+  #   image: face-recognition
+  #   build: .
+  #   ports:
+  #     - 3000:3000
+  recognition:
+    image: face_recognition
+    container_name: recognition
     build: .
-    ports:
-      - 3000:3000
+    volumes:
+      - /home/ailab/projects/face-recognition-system/images:/app/images
+      - /home/ailab/projects/face-recognition-system/data:/app/data
+    environment:
+      - PATH_IMAGES=images
+      - DATA_NAME=data.pkl
+      - FLASK_ENV=development
+      - TF_CPP_MIN_LOG_LEVEL=3
+      - CUDA_VISIBLE_DEVICES=1
+    networks:
+     - face-recognition-system
+    expose:
+      - "5000"
+    runtime: nvidia

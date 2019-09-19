@@ -5,6 +5,10 @@ LABEL Author=AnhDH
 WORKDIR /app
 ADD . /app
 
+RUN apt-get update && \
+    apt-get install -y libsm6 libxext6 \
+    libsm6 libxrender1 libfontconfig1
+
 RUN python3 -m pip install -r requirements.txt
 
 RUN ["python3", "get_images.py"]

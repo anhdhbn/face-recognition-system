@@ -56,10 +56,16 @@ def post_to_main_server(id_persion, parent_path, pos):
   x, y, w, h = pos
   # pos la x y w h, x y la toa do bat dau w h la chieu dai va chieu cao
   # dua vao do ma cat
+  # print(image_to_base64(parent_path))
   img = cv2.imread(parent_path)
   cv2.rectangle(img, (x, y), (x+w, y+h), (255,0,0), 2)
-  
+  str_img = numpy_to_base64(img)
 
+  with open('dcm.txt', 'a') as the_file:
+    the_file.write(str_img)
+
+  
+  print(str_img)
   item["TaggingFaceID"]=0  #truyền vào 0, ngầm hiểu làm thêm mới
   item["CameraID"]= 1 #Camera nhan dang, có thể thử với số 1, 2 gì đó
   item["PersonID"]= id_persion #Người đc nhận dạng, lấy theo PersonID đã lấy về hôm nọ nhé
@@ -85,4 +91,4 @@ def numpy_to_base64(img):
     return base64.b64encode(imdata).decode('ascii')
 
 if __name__ == "__main__":
-  post_to_main_server(3, "/home/ailab/projects/face-recognition-system/recognition/images_data/2/ad6aeadc-45d2-4436-912f-57e2076a30ec.jpg")
+  post_to_main_server(3, "/home/ailab/projects/face-recognition-system/images/1685922a-3a8e-43f9-b08e-3dac09ace198.jpg", (361, 228, 362, 362))

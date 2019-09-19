@@ -11,7 +11,10 @@ ADD . /app
 
 
 RUN apt-get update && \
-    apt-get install -y libsm6 libxrender1 libfontconfig1
+    apt-get install -y libsm6 libxext6 \
+     libsm6 libxrender1 libfontconfig1
+    
+
 
 # Using pip:
 RUN python3 -m pip install -r requirements.txt
