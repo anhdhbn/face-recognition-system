@@ -7,6 +7,8 @@ import base64
 import datetime
 import os
 import cv2
+from PIL import Image
+import io
 
 DATA_PATH = "./data"
 
@@ -59,19 +61,15 @@ def post_to_main_server(id_persion, parent_path, pos):
   # print(image_to_base64(parent_path))
   img = cv2.imread(parent_path)
   cv2.rectangle(img, (x, y), (x+w, y+h), (255,0,0), 2)
-  str_img = numpy_to_base64(img)
+  font = cv2.FONT_HERSHEY_SIMPLEX
+  cv2.putText(img, f'Person Id: {id_persion}', (x,y), font, 2, (0, 255, 0), 2, cv2.LINE_AA)
 
-  with open('dcm.txt', 'a') as the_file:
-    the_file.write(str_img)
-
-  
-  print(str_img)
   item["TaggingFaceID"]=0  #truyền vào 0, ngầm hiểu làm thêm mới
   item["CameraID"]= 1 #Camera nhan dang, có thể thử với số 1, 2 gì đó
   item["PersonID"]= id_persion #Người đc nhận dạng, lấy theo PersonID đã lấy về hôm nọ nhé
   item["LocationID"]= 0 #Cái này thừa, đc lấy theo camera ở trên
   item["Time"]= datetime.datetime.now()
-  item["Image"]= numpy_to_base64(img)
+  item["Image"]= matrix_to_base64(img[:, :, ::-1])
 
   response = requests.post(API_SAVE_TAGGINGFACE, data=item)
   if response.status_code != 200:
@@ -89,6 +87,13 @@ def numpy_to_base64(img):
     """Convert a Numpy array to JSON string"""
     imdata = pickle.dumps(img)
     return base64.b64encode(imdata).decode('ascii')
+
+def matrix_to_base64(img):
+  img = Image.fromarray(img.astype("uint8"))
+  rawBytes = io.BytesIO()
+  img.save(rawBytes, "PNG")
+  rawBytes.seek(0)
+  return base64.b64encode(rawBytes.read()).decode("utf-8")
 
 if __name__ == "__main__":
   post_to_main_server(3, "/home/ailab/projects/face-recognition-system/images/1685922a-3a8e-43f9-b08e-3dac09ace198.jpg", (361, 228, 362, 362))
