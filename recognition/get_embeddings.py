@@ -39,14 +39,14 @@ def main(args):
     phase_train_placeholder = sess.graph.get_tensor_by_name('model/phase_train:0')
 
     all_person = [path.split("/")[-1] for path in glob.glob(f"./{PATH}/*")]
-
     data = {}
 
     for person in all_person:
         all_files = glob.glob(f"./{PATH}/{person}/*.jpg")
-        all_embeddings = np.asarray([get_embedding(file, input, phase_train_placeholder, output, sess) for file in all_files])
-        avg_embedding = np.sum(all_embeddings, axis = 0)/len(all_files)
-        data[person] = avg_embedding
+        if(len(all_files) != 0):
+            all_embeddings = np.asarray([get_embedding(file, input, phase_train_placeholder, output, sess) for file in all_files])
+            avg_embedding = np.sum(all_embeddings, axis = 0)/len(all_files)
+            data[person] = avg_embedding
         
     save_obj(data, args.DATA_NAME)
 

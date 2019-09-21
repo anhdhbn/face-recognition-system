@@ -9,11 +9,13 @@ services:
       context: ./recognition
     environment:
       - DATA_NAME=data.pkl
-      - CUDA_VISIBLE_DEVICES=1
+      - CUDA_VISIBLE_DEVICES=0
+      - TF_CPP_MIN_LOG_LEVEL=3
     networks:
       - face-recognition-system
     volumes:
       - /home/ailab/projects/face-recognition-system/data:/app/data
+      - /home/ailab/projects/face-recognition-system/recognition:/app
     runtime: nvidia
 
   recognition:
@@ -25,6 +27,7 @@ services:
     volumes:
       - /home/ailab/projects/face-recognition-system/images:/app/images
       - /home/ailab/projects/face-recognition-system/data:/app/data
+      - /home/ailab/projects/face-recognition-system/recognition:/app
     environment:
       - PATH_IMAGES=images
       - DATA_NAME=data.pkl
@@ -50,7 +53,7 @@ services:
     environment:
       - PATH_IMAGES=images
       # - URL_STREAMING=rtsp://admin:abcd1234@10.0.30.123:554/Streaming/Channels/101
-      - URL_STREAMING=http://10.0.30.219:8080/video
+      - URL_STREAMING=http://10.0.30.218:8080/video
       - SCALE_FACTOR=1.3
       - NEIGHBOURS=5
       - URL_ENDPOINT=http://recognition:5000/

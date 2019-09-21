@@ -9,6 +9,7 @@ import os
 import cv2
 from PIL import Image
 import io
+from pytz import timezone
 
 DATA_PATH = "./data"
 
@@ -44,11 +45,11 @@ def load_obj(path ):
 
 def find_distance(v1, v2):
   cos_sin = np.dot(v1, v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
-  return np.arccos(cos_sin)
+  return cos_sin
 
 def find_min(vector, db):
   dt = [(person_id, find_distance(vector, v2)) for person_id, v2 in db.items()]
-  person_id, _ = min(dt, key=lambda x: x[1]) 
+  person_id, _ = max(dt, key=lambda x: x[1])
   return person_id
 
 
@@ -56,6 +57,7 @@ def post_to_main_server(id_persion, parent_path, pos):
   API_SAVE_TAGGINGFACE = "http://api.recofat.vn/api/TaggingFaces?token=recofat@2019"
   item = {}
   x, y, w, h = pos
+  print(pos)
   # pos la x y w h, x y la toa do bat dau w h la chieu dai va chieu cao
   # dua vao do ma cat
   # print(image_to_base64(parent_path))
@@ -68,7 +70,7 @@ def post_to_main_server(id_persion, parent_path, pos):
   item["CameraID"]= 1 #Camera nhan dang, có thể thử với số 1, 2 gì đó
   item["PersonID"]= id_persion #Người đc nhận dạng, lấy theo PersonID đã lấy về hôm nọ nhé
   item["LocationID"]= 0 #Cái này thừa, đc lấy theo camera ở trên
-  item["Time"]= datetime.datetime.now()
+  item["Time"]= datetime.datetime.now().astimezone(timezone('Asia/Ho_Chi_Minh'))
   item["Image"]= matrix_to_base64(img[:, :, ::-1])
 
   response = requests.post(API_SAVE_TAGGINGFACE, data=item)
