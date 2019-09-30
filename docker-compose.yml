@@ -14,8 +14,8 @@ services:
     networks:
       - face-recognition-system
     volumes:
-      - /home/ailab/projects/face-recognition-system/data:/app/data
-      - /home/ailab/projects/face-recognition-system/recognition:/app
+      - ./data:/app/data
+      - ./recognition:/app
     runtime: nvidia
 
   recognition:
@@ -25,9 +25,9 @@ services:
       dockerfile: Dockerfile
       context: ./recognition
     volumes:
-      - /home/ailab/projects/face-recognition-system/images:/app/images
-      - /home/ailab/projects/face-recognition-system/data:/app/data
-      - /home/ailab/projects/face-recognition-system/recognition:/app
+      - ./images:/app/images
+      - ./data:/app/data
+      - ./recognition:/app
     environment:
       - PATH_IMAGES=images
       - DATA_NAME=data.pkl
@@ -58,28 +58,11 @@ services:
       - NEIGHBOURS=5
       - URL_ENDPOINT=http://recognition:5000/
     volumes:
-      - /home/ailab/projects/face-recognition-system/images:/app/images
+      - ./images:/app/images
     links:
       - "recognition:recognition"
     networks:
      - face-recognition-system
-  
-  # compose-test-ping:
-  #   image: centos
-  #   links:
-  #     - recognition
-  #   command: ping -c 5 recognition
-  #   networks:
-  #    - face-recognition-system
-  # compose-test-http:
-  #   image: mwendler/wget
-  #   links:
-  #     - recognition
-  #   command: wget -T 50 -c recognition:5000
-  #   networks:
-  #    - face-recognition-system
-  #   depends_on:
-  #     - recognition
 networks:
   face-recognition-system:
     name: face-recognition-system
