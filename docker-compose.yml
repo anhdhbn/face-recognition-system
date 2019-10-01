@@ -24,6 +24,9 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./recognition
+    command: sh -c ./download_data.sh
+    command: sh -c ./download_models.sh
+    command: python3 server.py
     volumes:
       - ./images:/app/images
       - ./data:/app/data

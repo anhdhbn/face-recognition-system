@@ -45,7 +45,7 @@ def save_obj(obj, path ):
 def load_obj(path ):
   print(DATA_PATH, path)
   with open( os.path.join(DATA_PATH, path), 'rb') as f:
-      return pickle.load(f)
+    return pickle.load(f)
 
 def find_distance(v1, v2):
   cos_sin = np.dot(v1, v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
