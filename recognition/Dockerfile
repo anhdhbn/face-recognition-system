@@ -18,7 +18,7 @@ RUN apt-get update && \
 # Using pip:
 RUN python3 -m pip install -r requirements.txt
 
-CMD ["sh", "-c", "./download_models.sh &&", "sh", "-c", "./download_data.sh" , "sh", "-c", "./wait-for-it.sh", "&& python3", "server.py"]
+CMD ["sh -c ./download_models.sh && sh -c ./download_data.sh" , "&& python3 server.py"]
 
 # Using pipenv:
 #RUN python3 -m pip install pipenv
