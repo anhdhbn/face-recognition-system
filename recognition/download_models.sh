@@ -1,0 +1,1 @@
+[ -f /app/models/frozen_model.pb ] && mkdir -p models && wget frozen_model.pb -P /app/models/ http://download.recofat.vn/frozen_model.pb

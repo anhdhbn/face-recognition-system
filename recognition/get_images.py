@@ -27,7 +27,10 @@ if response.status_code == 200:
             image = requests.get(HOST + path) 
             path_save = os.path.join(PATH, str(info["PersonID"]), path.split("/")[-1])
             print(path_save)
-            with open(path_save, 'wb') as f:
-                f.write(image.content)
+            try:
+                with open(path_save, 'wb') as f:
+                    f.write(image.content)
+            except Exception as e:
+                print(e)
 else:
     print("Can not fetch data...")

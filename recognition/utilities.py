@@ -21,22 +21,26 @@ def preprocess_image(image_path):
   return img
 
 def load_graph(frozen_graph_filename):
-    with tf.gfile.GFile(frozen_graph_filename, "rb") as f:
-      graph_def = tf.GraphDef()
-      graph_def.ParseFromString(f.read())
+  with tf.gfile.GFile(frozen_graph_filename, "rb") as f:
+    graph_def = tf.GraphDef()
+    graph_def.ParseFromString(f.read())
 
-    with tf.Graph().as_default() as graph:
-      tf.import_graph_def(graph_def, name="")
-    return graph
+  with tf.Graph().as_default() as graph:
+    tf.import_graph_def(graph_def, name="")
+  return graph
 
 def get_embedding(image_path, input, phase_train_placeholder, embedding, sess):
-    img = preprocess_image(image_path)
-    emb = sess.run(embedding, feed_dict={input: img, phase_train_placeholder: False})
-    return emb.squeeze()
+  img = preprocess_image(image_path)
+  emb = sess.run(embedding, feed_dict={input: img, phase_train_placeholder: False})
+  return emb.squeeze()
     
 def save_obj(obj, path ):
-    with open(os.path.join(DATA_PATH, path) , 'wb') as f:
-        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
+  try:
+    os.makedirs(DATA_PATH)
+  except:
+    pass
+  with open(os.path.join(DATA_PATH, path) , 'wb') as f:
+      pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def load_obj(path ):
   print(DATA_PATH, path)
@@ -57,7 +61,6 @@ def post_to_main_server(id_persion, parent_path, pos):
   API_SAVE_TAGGINGFACE = "http://api.recofat.vn/api/TaggingFaces?token=recofat@2019"
   item = {}
   x, y, w, h = pos
-  print(pos)
   # pos la x y w h, x y la toa do bat dau w h la chieu dai va chieu cao
   # dua vao do ma cat
   # print(image_to_base64(parent_path))
@@ -86,9 +89,9 @@ def image_to_base64(path_image):
     return encoded_string
 
 def numpy_to_base64(img):
-    """Convert a Numpy array to JSON string"""
-    imdata = pickle.dumps(img)
-    return base64.b64encode(imdata).decode('ascii')
+  """Convert a Numpy array to JSON string"""
+  imdata = pickle.dumps(img)
+  return base64.b64encode(imdata).decode('ascii')
 
 def matrix_to_base64(img):
   img = Image.fromarray(img.astype("uint8"))

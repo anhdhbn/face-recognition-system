@@ -16,8 +16,6 @@ from utilities import load_graph, save_obj, get_embedding
 
 PATH = "images_data"
 
-DATA_PATH = "data"
-
 args = argparse.ArgumentParser()
 DATA_NAME = os.getenv('DATA_NAME', "data.pkl")
 args.DATA_NAME = DATA_NAME
@@ -26,11 +24,6 @@ TENSOR_FROZEN_MODEL_PATH = './models/frozen_model.pb'
 
 
 def main(args):
-    try:
-        os.makedirs(DATA_PATH)
-    except:
-        pass
-
     graph = load_graph(TENSOR_FROZEN_MODEL_PATH)
     sess = tf.Session(graph=graph, config=tf.ConfigProto(gpu_options=tf.GPUOptions(per_process_gpu_memory_fraction=0.60)))
 
@@ -55,6 +48,7 @@ if __name__ == "__main__":
         print("DATA_NAME is not None")
     else:
         main(args)
+
 
 
 

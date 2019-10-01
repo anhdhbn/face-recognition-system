@@ -4,6 +4,7 @@ FROM nvcr.io/nvidia/tensorflow:19.08-py3
 #FROM continuumio/miniconda3
 
 LABEL Name=face-recognition Version=0.0.1
+LABEL Author=AnhDH
 
 
 WORKDIR /app
@@ -13,15 +14,11 @@ ADD . /app
 RUN apt-get update && \
     apt-get install -y libsm6 libxext6 \
      libsm6 libxrender1 libfontconfig1
-    
-
 
 # Using pip:
 RUN python3 -m pip install -r requirements.txt
 
-
-
-CMD ["python3", "server.py"]
+CMD ["sh", "-c", "./download_models.sh &&", "sh", "-c", "./download_data.sh" , "sh", "-c", "./wait-for-it.sh", "&& python3", "server.py"]
 
 # Using pipenv:
 #RUN python3 -m pip install pipenv
