@@ -4,6 +4,6 @@ then
 else
     echo "downloading frozen_model.pb"
     mkdir -p models
-    wget frozen_model.zip -P ./models/ http://download.recofat.vn/frozen_model.zip
-    unzip ./models/frozen_model.zip -d ./models/
+    wget frozen_model.zip -P ./models/ -N http://download.recofat.vn/frozen_model.zip
+    unzip -o ./models/frozen_model.zip -d ./models/
 fi
