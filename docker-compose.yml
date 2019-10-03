@@ -7,6 +7,8 @@ services:
     build:
       dockerfile: Dockerfile.Embedding
       context: ./recognition
+    command: sh -c ./download_models.sh
+    command: python3 get_embeddings.py
     environment:
       - DATA_NAME=data.pkl
       - CUDA_VISIBLE_DEVICES=0
