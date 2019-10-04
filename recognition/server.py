@@ -35,15 +35,15 @@ data_pkl = load_obj(DATA_NAME)
 def post():
   data = request.get_json()
   parent_path = os.path.join(args.PATH_IMAGES, data['parent_path'])
-  print("parent path: ", parent_path)
+  # print("parent path: ", parent_path)
   for child in data['childrent']:
     path_child, x, y, w, h = child
     embedding = get_embedding(path_child, input, phase_train_placeholder, output, sess)
     person_id = find_min(embedding, data_pkl)  
-    post_to_main_server(person_id, parent_path, (x, y, w, h))
+    post_to_main_server(person_id, parent_path, (x, y, w, h)) 
   return 'OK!'
 
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET']) 
 def test():
   return "Okiela"
   

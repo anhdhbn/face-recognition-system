@@ -11,8 +11,5 @@ RUN apt-get update && \
 
 RUN python3 -m pip install -r requirements.txt
 
-# RUN sh -c ./download_models.sh
-RUN ["python3", "get_images.py"]
-
 # CMD ["python3", "get_embeddings.py"]
-CMD ["sh", "-c", "./download_models.sh && python3 get_embeddings.py"]
+CMD ["sh", "-c", "./download_models.sh && python3 get_images.py && python3 get_embeddings.py"]

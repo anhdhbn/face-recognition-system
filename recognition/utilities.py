@@ -45,14 +45,24 @@ def save_obj(obj, path ):
 def load_obj(path ):
   print(DATA_PATH, path)
   with open( os.path.join(DATA_PATH, path), 'rb') as f:
-    return pickle.load(f)
+    data = pickle.load(f)
+    print(data)
+    return data
 
 def find_distance(v1, v2):
+  print(v1.shape, v2.shape)
   cos_sin = np.dot(v1, v2)/(np.linalg.norm(v1)*np.linalg.norm(v2))
   return cos_sin
 
 def find_min(vector, db):
+  # dt = []
+  # print(db)
+  # for person_id, v2 in db.items():
+  #   distance = find_distance(vector, v2)
+  #   print(distance)
+  #   dt = dt + [(person_id, distance)]
   dt = [(person_id, find_distance(vector, v2)) for person_id, v2 in db.items()]
+  print( "="*30,dt)
   person_id, _ = max(dt, key=lambda x: x[1])
   return person_id
 
