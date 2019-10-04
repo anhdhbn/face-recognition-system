@@ -1,0 +1,71 @@
+version: '2.3'
+
+services:
+  get_embedding:
+    image: get_embedding
+    container_name: get_embedding
+    build:
+      dockerfile: Embedding.Dockerfile
+      context: ./recognition
+    environment:
+      - DATA_NAME=data.pkl
+      - CUDA_VISIBLE_DEVICES=0
+      - TF_CPP_MIN_LOG_LEVEL=3
+    networks:
+      - face-recognition-system
+    volumes:
+      - ./data:/app/data
+      - ./recognition:/app
+    # runtime: nvidia
+
+  recognition:
+    image: face_recognition
+    container_name: recognition
+    build:
+      dockerfile: Dockerfile
+      context: ./recognition
+    volumes:
+      - ./images:/app/images
+      - ./data:/app/data
+      - ./recognition:/app
+    environment:
+      - PATH_IMAGES=images
+      - DATA_NAME=data.pkl
+      - FLASK_ENV=development
+      - TF_CPP_MIN_LOG_LEVEL=3
+      - CUDA_VISIBLE_DEVICES=1
+    networks:
+     - face-recognition-system
+    expose:
+      - "5000"
+    ports:
+      - "5000:5000"
+    # runtime: nvidia
+    depends_on:
+      - get_embedding
+  
+  detection:
+    image: face_detection
+    container_name : face_detection
+    build:
+      dockerfile: Dockerfile
+      context: ./cascade
+    depends_on:
+      - recognition
+    environment:
+      - PATH_IMAGES=images
+      # - URL_STREAMING=rtsp://admin:abcd1234@10.0.30.123:554/Streaming/Channels/101
+      - URL_STREAMING=http://192.168.1.240:8080/video
+      - SCALE_FACTOR=1.3
+      - NEIGHBOURS=5
+      - URL_ENDPOINT=http://recognition:5000/
+    volumes:
+      - ./images:/app/images
+    links:
+      - "recognition:recognition"
+    networks:
+     - face-recognition-system
+networks:
+  face-recognition-system:
+    name: face-recognition-system
+    driver: bridge
