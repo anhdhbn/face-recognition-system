@@ -16,7 +16,7 @@ services:
     volumes:
       - ./data:/app/data
       - ./recognition:/app
-    # runtime: nvidia
+    runtime: nvidia
 
   recognition:
     image: face_recognition
@@ -40,7 +40,7 @@ services:
       - "5000"
     ports:
       - "5000:5000"
-    # runtime: nvidia
+    runtime: nvidia
     depends_on:
       - get_embedding
   
