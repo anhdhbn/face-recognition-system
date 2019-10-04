@@ -114,7 +114,6 @@ def post_processing(faces, frame):
         }
         # await requests.post(args.URL_ENDPOINT, data)
         # requests.post(args.URL_ENDPOINT, data)
-        print(data)
         try:      
             if sys.version_info >= (3, 7):
                 asyncio.run(request(data))
